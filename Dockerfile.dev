@@ -21,6 +21,19 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime > /etc/timezone
 # 创建配置文件存放用文件夹
 # ====================================================
 
+# 安装 bash
+RUN yum -y install bash
+
+# 安装 MySQL 5.7
+WORKDIR /root/
+RUN wget http://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
+RUN yum -y localinstall mysql57-community-release-el7-8.noarch.rpm
+RUN rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+RUN yum -y install mysql-server
+EXPOSE 3306
+# 初始化 MySQL
+RUN /usr/bin/mysqld --initialize-insecure --user=root
+
 # 克隆并编译 DataX-Web 的源码（在 /root/ 目录下进行）
 WORKDIR /root/
 RUN git clone https://github.com/WeiYe-Jing/datax-web.git
@@ -31,11 +44,12 @@ RUN mvn clean install
 RUN cp /root/datax-web/build/datax-web-*.tar.gz /usr/local/datax-web.tar.gz
 WORKDIR /usr/local/
 RUN tar -zxvf datax-web.tar.gz
+RUN mv datax-web-* data-web
 WORKDIR /usr/local/datax-web/
 
 # 安装 DataX-Web
-# RUN ./bin/install.sh --force
+RUN ./bin/install.sh --force
 
 # 启动命令
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/usr/bin/mysqld --user=root"]
 CMD [""]
