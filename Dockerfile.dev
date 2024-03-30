@@ -32,7 +32,7 @@ RUN rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
 RUN yum -y install mysql-server
 EXPOSE 3306
 # 初始化 MySQL
-RUN /usr/bin/mysqld --initialize-insecure --user=root
+RUN /usr/sbin/mysqld --initialize-insecure --user=root
 
 # 克隆并编译 DataX-Web 的源码（在 /root/ 目录下进行）
 WORKDIR /root/
@@ -51,5 +51,5 @@ WORKDIR /usr/local/datax-web/
 RUN ./bin/install.sh --force
 
 # 启动命令
-ENTRYPOINT ["/usr/bin/mysqld --user=root"]
+ENTRYPOINT ["/usr/sbin/mysqld --user=root"]
 CMD [""]
