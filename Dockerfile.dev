@@ -1,0 +1,41 @@
+# 基础镜像系统版本为 rabbir/datax:latest
+FROM rabbir/datax:latest
+
+# 维护者信息
+LABEL maintainer="Rabbir admin@cs.cheap"
+
+# Docker 内用户切换到 root
+USER root
+
+# 设置时区为东八区
+ENV TZ Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime > /etc/timezone
+
+# ========== DataX-docker 容器中已经完成的操作 ==========
+# 安装 Git 和 Wget
+# 下载解压 JDK
+# 下载解压 Maven
+# 添加容器内的永久环境变量
+# 添加构建用的临时环境变量
+# 克隆并编译 DataX 的源码
+# 创建配置文件存放用文件夹
+# ====================================================
+
+# 克隆并编译 DataX-Web 的源码（在 /root/ 目录下进行）
+WORKDIR /root/
+RUN git clone https://github.com/WeiYe-Jing/datax-web.git
+WORKDIR /root/datax-web/
+RUN mvn clean install
+
+# 移动 DataX-Web 的安装包，安装包名类似 datax-web-{VERSION}.tar.gz
+RUN cp /root/datax-web/build/datax-web-*.tar.gz /usr/local/datax-web.tar.gz
+WORKDIR /usr/local/
+RUN tar -zxvf datax-web.tar.gz
+WORKDIR /usr/local/datax-web/
+
+# 安装 DataX-Web
+# RUN ./bin/install.sh --force
+
+# 启动命令
+ENTRYPOINT ["/bin/bash"]
+CMD [""]
