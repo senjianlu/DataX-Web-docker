@@ -1,5 +1,8 @@
 # DataX-Web-docker
 
+> 2024/03/31 更新  
+> 开发中，暂时不可用。
+
 ## 项目介绍
 基于官方 CentOS7 镜像的、整合了 DataX 和 DataX-Web 的构建脚本。
 
